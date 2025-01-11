@@ -69,4 +69,10 @@ class LinearInversion:
         else:
             vander_order = polynomial_order + 1
 
-        return np.vander(X, vander_order)
+        if len(X.shape) == 1:
+            if vander_order > 1:
+                return np.vander(X, vander_order)
+            else:
+                return X.reshape(-1, 1)
+        else:
+            return X
