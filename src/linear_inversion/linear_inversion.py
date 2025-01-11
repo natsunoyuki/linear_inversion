@@ -65,7 +65,7 @@ class LinearInversion:
 
     def make_data_kernel(self, X, polynomial_order = None):
         if polynomial_order is None:
-            vander_order = self.polynomial_order
+            vander_order = self.vander_order
         else:
             vander_order = polynomial_order + 1
 
