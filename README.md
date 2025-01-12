@@ -59,7 +59,7 @@ print(m)
 
 # API Reference
 ## LinearInversion
-```python
+```
 LinearInversion(
     error_type="l2", 
     polynomial_order=1, 
