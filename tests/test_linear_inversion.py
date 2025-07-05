@@ -106,3 +106,19 @@ class TestL2LinearInversion:
         model.fit(X, y)
         
         npt.assert_allclose(model.m, m, atol=1e-3)
+
+
+    def test_load_model_parameters(
+        self, 
+        analytical_l2_config, 
+        noisy_regression_data, 
+        l2_model_parameters,
+        l2_model_predictions,
+    ):
+        X, _ = load_regression_data(noisy_regression_data)
+        y_pred = load_regression_model_parameters(l2_model_predictions)
+
+        model = LinearInversion(**analytical_l2_config)
+        model.m = load_regression_model_parameters(l2_model_parameters)
+        
+        npt.assert_allclose(y_pred, model.predict(X).squeeze(), atol=1e-3)
