@@ -1,7 +1,21 @@
+# Copyright 2025 Y Natsume.
+#
+# linear_inversion is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) any 
+# later version.
+#
+# linear_inversion is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+# details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# linear_inversion. If not, see <https://www.gnu.org/licenses/>.
+
 import numpy as np
 from scipy.optimize import linprog
 
-# Local imports.
 from linear_inversion.least_squares import least_squares
 
 
@@ -9,18 +23,23 @@ def l1_norm_inversion(G: np.ndarray, d: np.ndarray, sd = None) -> np.ndarray:
     """
     Linear inversion using L1 norm error instead of mean squared error for
     over determined problems.
+    
     The inversion problem is transformed into a linear programming problem
     and solved using the linprog() function from scipy.optimize.
+
     See Geophysical Data Analysis: Discrete Inverse Theory MATLAB Edition
     Third Edition by William Menke pages 153-157 for more details.
     
     Inputs
-        G: np.array
-        d: np.array
-        sd: np.array
-        
-    Returns
-        mest_l1: np.array
+        G: ndarray
+            Input data/data kernel/Green function. Must be a vander matrix.
+        d: ndarray
+            Measured variable/target variable.
+        sd: ndarray
+            Standard deviations of the measurement d.
+    Outputs
+        m: ndarray
+            Linear inversion model parameters.
     """
     # If the std of the measurement d was not provided,
     # set it to 1.
@@ -80,6 +99,22 @@ def l1_norm_inversion_sgd(
 ) -> np.ndarray:
     """
     L1 norm inversion numerical solver using stochastic gradient descent.
+
+    Inputs
+        G: array
+            Input data/data kernel/Green function. Must be a vander matrix.
+        d: array
+            Measured variable/target variable.
+        eta: float
+            SGD learning rate. Set to 0.01 by default.
+        n_iter: int
+            SGD steps. Set to 100 by default.
+        return_loss: bool
+            Flag to return the loss values together with the predictions. 
+            False by default.
+    Outputs
+        m: ndarray
+            Linear inversion model parameters.
     """
     m = np.random.normal(size = G.shape[1])
     losses = []

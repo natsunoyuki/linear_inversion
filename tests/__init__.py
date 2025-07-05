@@ -12,12 +12,3 @@
 #
 # You should have received a copy of the GNU General Public License along with 
 # linear_inversion. If not, see <https://www.gnu.org/licenses/>.
-
-import numpy as np
-
-
-def r2(d: np.ndarray, d_pred: np.ndarray) -> float:
-    """
-    R**2 (coefficient of determination) regression score function.
-    """
-    return 1 - np.sum((d - d_pred)**2) / np.sum((d - np.mean(d))**2)
