@@ -64,7 +64,6 @@ pytest tests/
 
 
 # API Reference
-## LinearInversion
 ```
 LinearInversion(
     error_type="l2", 
