@@ -1,6 +1,20 @@
+# Copyright 2025 Y Natsume.
+#
+# linear_inversion is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) any 
+# later version.
+#
+# linear_inversion is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+# details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# linear_inversion. If not, see <https://www.gnu.org/licenses/>.
+
 import numpy as np
 
-# Local imports.
 from linear_inversion.least_squares import least_squares, least_squares_sgd
 from linear_inversion.l1_norm_inversion import l1_norm_inversion, l1_norm_inversion_sgd
 
@@ -14,16 +28,42 @@ class LinearInversion:
         sgd_lr = 0.01, 
         sgd_iter = 100,
     ):
+        """
+        Class for linear inversion models.
+
+        Inputs
+            error_type: str
+                Error type. Choose from "l1" or "l2". "l2" by default.
+            polynomial_order: int
+                Polynomial order for the data kernel. y = mx has order 1.
+                y = mx**2 + nx has order 2. 1 by default.
+            use_sgd: bool  
+                Flag to use SGD solver or not. Set to False by default. If False
+                analytical solvers will be used instead.
+            sgd_lr: float
+                SGD learning rate. Only works when use_sgd=True.
+            sgd_iter: int
+                SGD iterations. Only works when sgd_iter=True.
+        """
         self.model = None
         
         self.m = None
-        self.vander_order = polynomial_order + 1
+        assert int(polynomial_order) == polynomial_order, "polynomial_order must be an integer."
+        assert polynomial_order > 0, "polynomial_order must be positive."
+        self.vander_order = int(polynomial_order + 1)
 
+        assert use_sgd in [True, False], "use_sgd must be boolean."
+        self.use_sgd = use_sgd
+
+        assert sgd_lr > 0, "sgd_lr must be positive."
         self.sgd_lr = sgd_lr
+
+        assert round(sgd_iter) == sgd_iter, "sgd_iter must be an integer."
+        assert sgd_iter > 0, "sgd_iter must be positive."
         self.sgd_iter = sgd_iter
 
-        self.error_type = error_type.lower()
-        self.use_sgd = use_sgd
+        assert error_type in ["l1", "l2"], "error_type must be from the set ['l1', 'l2']."
+        self.error_type = error_type
         if self.error_type == "l2":
             if self.use_sgd is True:
                 self.model = least_squares_sgd
@@ -36,7 +76,35 @@ class LinearInversion:
                 self.model = l1_norm_inversion
 
 
-    def fit(self, X, y, sd = None, polynomial_order = None, sgd_lr = None, sgd_iter = None):
+    def fit(
+        self, 
+        X: np.ndarray, 
+        y: np.ndarray, 
+        sd: np.ndarray = None, 
+        polynomial_order: int = None, 
+        sgd_lr: float = None, 
+        sgd_iter: int = None
+    ) -> np.ndarray:
+        """
+        Fits the linear inversion model on the data (X, y).
+
+        Inputs
+            X: ndarray
+                Data kernel/measurements.
+            y: ndarray
+                Target variables.
+            sd: ndarray
+                Standard deviation of the elements of y.
+            polynomial_order: int
+                Polynomial order of the linear inversion model.
+            sgd_lr: float
+                SGD learning rate. Only works when use_sgd=True.
+            sgd_iter: int
+                SGD iterations. Only works when sgd_iter=True.
+        Outputs
+            m: ndarray
+                Model parameters.
+        """
         assert self.model is not None
 
         G = self.make_data_kernel(X, polynomial_order)
@@ -57,13 +125,46 @@ class LinearInversion:
         return self.m
 
 
-    def predict(self, X, polynomial_order = None):
+    def predict(
+        self, 
+        X: np.ndarray, 
+        polynomial_order: int=None
+    ) -> np.ndarray:
+        """
+        Makes predictions given some measurements X.
+
+        Inputs
+            X: ndarray
+                Data kernel/measurements.
+            polynomial_order: int
+                Polynomial order of the linear inversion model.
+        Outputs
+            m: ndarray
+                Model parameters.
+        """
         assert self.m is not None
         G = self.make_data_kernel(X, polynomial_order)
         return np.dot(G, self.m.reshape(-1, 1))
 
 
-    def make_data_kernel(self, X, polynomial_order = None):
+    def make_data_kernel(
+        self, 
+        X: np.ndarray, 
+        polynomial_order: int=None
+    ) -> np.ndarray:
+        """
+        Creates the data kernel from the input independent variables X.
+
+        Inputs
+            X: ndarray
+                Data kernel/measurements.
+            polynomial_order: int
+                Polynomial order of the linear inversion model.
+        Outputs
+            G: ndarray
+                Vander matrix of the data kernel representing the correct
+                polynomial order of the linear inversion model.
+        """
         if polynomial_order is None:
             vander_order = self.vander_order
         else:
@@ -76,3 +177,17 @@ class LinearInversion:
                 return X.reshape(-1, 1)
         else:
             return X
+
+
+    def set_model_parameters(
+        self,
+        m: np.ndarray
+    ):
+        """
+        Sets the model parameters with the given values.
+
+        Inputs
+            m: ndarray
+                Model parameters
+        """
+        self.m = m
