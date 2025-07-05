@@ -35,20 +35,24 @@ def polynomial_order_not_positive_config(model_config):
     model_config["polynomial_order"] = -1
     return model_config
 
+
 @pytest.fixture
 def use_sgd_not_bool_config(model_config):
     model_config["use_sgd"] = 12345
     return model_config
+
 
 @pytest.fixture
 def sgd_lr_not_positive_config(model_config):
     model_config["sgd_lr"] = -0.01
     return model_config
 
+
 @pytest.fixture
 def sgd_iter_not_int_config(model_config):
     model_config["sgd_iter"] = 100.1
     return model_config
+
 
 @pytest.fixture
 def sgd_iter_not_positive_config(model_config):

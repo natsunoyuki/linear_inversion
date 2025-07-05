@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License along with 
 # linear_inversion. If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 from pathlib import Path
 import pytest
 import gc
