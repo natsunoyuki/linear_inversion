@@ -7,7 +7,7 @@ Install this repository directly from GitHub:
 !pip install git+https://github.com/natsunoyuki/linear_inversion
 ```
 
-Alternatively, clone this repository, and install locally with a virtual environment.
+Alternatively, clone this repository, and install locally (in developer mode) with a virtual environment.
 ```bash
 git clone https://github.com/natsunoyuki/linear_inversion
 cd linear_inversion
@@ -55,7 +55,13 @@ print(m)
 # array([3.16194501, 2.70066348])
 ```
 
-# Advanced Usage
+
+# Tests
+To ensure that `linear_inversion` works consistently across different environments, various tests have been implemented. To run them, execute:
+```bash
+pytest tests/
+```
+
 
 # API Reference
 ## LinearInversion
