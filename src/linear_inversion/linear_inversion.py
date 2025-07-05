@@ -144,7 +144,7 @@ class LinearInversion:
         """
         assert self.m is not None
         G = self.make_data_kernel(X, polynomial_order)
-        return np.dot(G, self.m.reshape(-1, 1))
+        return np.dot(G, self.m.reshape(-1, 1)).squeeze()
 
 
     def make_data_kernel(

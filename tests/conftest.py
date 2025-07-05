@@ -25,6 +25,7 @@ TEST_DATA_DIR = BASE_DIR.parent / "tests" / "test_data"
 NOISY_REGRESSION_DATA = ["data_001.csv"]
 L1_MODEL_PARAMETERS = ["l1_m_001.csv"]
 L2_MODEL_PARAMETERS = ["l2_m_001.csv"]
+L2_MODEL_PREDICTIONS = ["l2_y_pred_001.csv"]
 
 
 @pytest.fixture
@@ -52,5 +53,11 @@ def l2_model_parameters(request):
 
 @pytest.fixture(params=L1_MODEL_PARAMETERS)
 def l1_model_parameters(request):
+    yield TEST_DATA_DIR / request.param
+    gc.collect()
+
+
+@pytest.fixture(params=L2_MODEL_PREDICTIONS)
+def l2_model_predictions(request):
     yield TEST_DATA_DIR / request.param
     gc.collect()
